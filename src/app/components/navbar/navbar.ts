@@ -40,6 +40,7 @@ export class Navbar {
       label: 'Demos',
       path: '/demos',
     },
+    { label: 'Useful Links', path: '/links' },
     {
       label: 'Support',
       path: '/support',

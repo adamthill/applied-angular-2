@@ -5,3 +5,5 @@ export type ApiLinkItem = {
   description: string;
   added: string;
 };
+
+export type SortingOptions = 'NewestFirst' | 'OldestFirst';

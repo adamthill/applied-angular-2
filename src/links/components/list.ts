@@ -5,8 +5,9 @@ import {
   ChangeDetectionStrategy,
   computed,
   signal,
+  effect,
 } from '@angular/core';
-import { ApiLinkItem } from '../types';
+import { ApiLinkItem, SortingOptions } from '../types';
 
 @Component({
   selector: 'app-links-list',
@@ -61,7 +62,20 @@ export class List {
   linksResource = httpResource<ApiLinkItem[]>(() => ({
     url: 'https://api.some-fake-server.com/links',
   }));
-  sortOptions = signal<'NewestFirst' | 'OldestFirst'>('NewestFirst');
+  sortOptions = signal<SortingOptions>('NewestFirst');
+
+  constructor() {
+    const savedSortOptions = localStorage.getItem('sort-order');
+    if (savedSortOptions != null) {
+      const sortBy = savedSortOptions as SortingOptions;
+      this.sortOptions.set(sortBy);
+    }
+    effect(() => {
+      const nowSortingBy = this.sortOptions();
+      localStorage.setItem('sort-order', nowSortingBy);
+      console.log('Sorting Order Changed To ', nowSortingBy);
+    });
+  }
   sortedList = computed(() => {
     const links = this.linksResource.value() || [];
     const sortingBy = this.sortOptions();

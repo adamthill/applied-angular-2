@@ -41,6 +41,7 @@ export class Navbar {
       path: '/demos',
     },
     { label: 'Useful Links', path: '/links' },
+    { label: 'Counter', path: '/counter-lab' },
     {
       label: 'Support',
       path: '/support',

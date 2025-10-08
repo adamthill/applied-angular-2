@@ -1,13 +1,11 @@
-import { DatePipe, JsonPipe } from '@angular/common';
-import { httpResource } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   computed,
-  signal,
-  effect,
+  inject,
 } from '@angular/core';
-import { ApiLinkItem, SortingOptions } from '../types';
+import { LinksStore } from '../stores/links';
 
 @Component({
   selector: 'app-links-list',
@@ -15,70 +13,37 @@ import { ApiLinkItem, SortingOptions } from '../types';
   imports: [DatePipe],
   template: `
     <div class="">
-      @if (linksResource.isLoading()) {
-        <div class="alert alert-info">Your data is loading!</div>
-      } @else {
-        <div class="join">
-          <button
-            (click)="sortOptions.set('NewestFirst')"
-            [disabled]="sortOptions() === 'NewestFirst'"
-            class="btn btn-ghost join-item"
-          >
-            Newest First
-          </button>
-          <button
-            (click)="sortOptions.set('OldestFirst')"
-            [disabled]="sortOptions() === 'OldestFirst'"
-            class="btn btn-ghost join-item"
-          >
-            Oldest First
-          </button>
-        </div>
-        @for (link of sortedList(); track link.id) {
-          <div class="card w-96 bg-base-100 card-sm shadow-sm">
-            <div class="card-body">
-              <h2 class="card-title">{{ link.title }}</h2>
-              <p>
-                {{ link.description }}
-              </p>
-              <div class="justify-end card-actions">
-                <a [href]="link.link" target="_blank" class="btn btn-primary"
-                  >Visit</a
-                >
-                <p>Link {{ link.link }}</p>
-                <p>Added on {{ link.added | date }}</p>
-              </div>
+      @for (link of sortedList(); track link.id) {
+        <div class="card w-96 bg-base-100 card-sm shadow-sm">
+          <div class="card-body">
+            <h2 class="card-title">{{ link.title }}</h2>
+            <p>
+              {{ link.description }}
+            </p>
+            <div class="justify-end card-actions">
+              <a [href]="link.link" target="_blank" class="btn btn-primary"
+                >Visit</a
+              >
+              <p>Link {{ link.link }}</p>
+              <p>Added on {{ link.added | date: 'medium' }}</p>
             </div>
           </div>
-        } @empty {
-          <p>There are no links! Bummer!</p>
-        }
+        </div>
+      } @empty {
+        <p>There are no links! Bummer!</p>
       }
     </div>
   `,
   styles: ``,
 })
 export class List {
-  linksResource = httpResource<ApiLinkItem[]>(() => ({
-    url: 'https://api.some-fake-server.com/links',
-  }));
-  sortOptions = signal<SortingOptions>('NewestFirst');
+  //   sortOptions = signal<SortingOptions>('OldestFirst');
 
-  constructor() {
-    const savedSortOptions = localStorage.getItem('sort-order');
-    if (savedSortOptions != null) {
-      const sortBy = savedSortOptions as SortingOptions;
-      this.sortOptions.set(sortBy);
-    }
-    effect(() => {
-      const nowSortingBy = this.sortOptions();
-      localStorage.setItem('sort-order', nowSortingBy);
-      console.log('Sorting Order Changed To ', nowSortingBy);
-    });
-  }
+  store = inject(LinksStore);
+
   sortedList = computed(() => {
-    const links = this.linksResource.value() || [];
-    const sortingBy = this.sortOptions();
+    const links = this.store.linksResource.value() || [];
+    const sortingBy = this.store.sortingBy();
 
     return [...links].sort((lhs, rhs) => {
       const aDate = new Date(lhs.added);

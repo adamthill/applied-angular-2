@@ -1,17 +1,30 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { List } from './components/list';
-import { httpResource } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouterLink, RouterOutlet } from '@angular/router';
+import { LinksStore } from './stores/links';
 
 @Component({
   selector: 'app-links',
-
   changeDetection: ChangeDetectionStrategy.OnPush,
-
-  imports: [List],
-
-  template: ` <p>Links Will Go Here</p>
-    <app-links-list />`,
-
+  providers: [LinksStore],
+  imports: [RouterLink, RouterOutlet],
+  template: `
+    @if (store.linksResource.isLoading() === false) {
+      <div class="flex flex-row gap-4">
+        <a class="link" routerLink="list">List</a>
+        <a class="link" routerLink="prefs">Prefs</a>
+      </div>
+      <div class="alert alert-info">
+        <p>There are {{ store.getNumberOfLinks() }} Links Available!</p>
+      </div>
+      <div>
+        <router-outlet />
+      </div>
+    } @else {
+      <div class="alert alert-warning">Loading your Links</div>
+    }
+  `,
   styles: ``,
 })
-export class Links {}
+export class Links {
+  store = inject(LinksStore);
+}

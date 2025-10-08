@@ -1,10 +1,11 @@
 import {
   Component,
   ChangeDetectionStrategy,
-  signal,
   computed,
+  inject,
 } from '@angular/core';
 import { Fizzbuzz } from '../components/fizzbuzz';
+import { CounterStore } from '../stores/counter';
 
 @Component({
   selector: 'app-ui',
@@ -14,28 +15,24 @@ import { Fizzbuzz } from '../components/fizzbuzz';
     <div>
       <button
         [disabled]="!canDecrement()"
-        (click)="downCount()"
+        (click)="store.downCount()"
         class="btn btn-primary"
       >
         -
       </button>
-      <span>{{ counter() }} </span>
-      <button (click)="upCount()" class="btn btn-primary">+</button>
+      <span>{{ store.counter() }} </span>
+      <button (click)="store.upCount()" class="btn btn-primary">+</button>
 
-      <app-fizzbuzz [counter]="counter()" />
+      <app-fizzbuzz [counter]="store.counter()" />
     </div>
   `,
   styles: ``,
+  providers: [],
 })
 export class Ui {
-  counter = signal(6);
+  store = inject(CounterStore);
 
-  canDecrement = computed(() => this.counter() !== 0);
-
-  upCount() {
-    this.counter.update((c) => c + 1);
-  }
-  downCount() {
-    this.counter.update((c) => c - 1);
-  }
+  canDecrement = computed(
+    () => this.store.counter() - this.store.increment() >= 0,
+  );
 }

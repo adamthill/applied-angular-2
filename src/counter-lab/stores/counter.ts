@@ -1,6 +1,8 @@
+import { computed } from '@angular/core';
 import {
   patchState,
   signalStore,
+  withComputed,
   withMethods,
   withProps,
   withState,
@@ -25,5 +27,8 @@ export const CounterStore = signalStore(
       patchState(state, { counter: state.counter() + state.increment() }),
     downCount: () =>
       patchState(state, { counter: state.counter() - state.increment() }),
+  })),
+  withComputed((state) => ({
+    canDecrement: computed(() => state.counter() - state.increment() >= 0),
   })),
 );

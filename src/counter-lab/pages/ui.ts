@@ -14,7 +14,7 @@ import { CounterStore } from '../stores/counter';
   template: `
     <div>
       <button
-        [disabled]="!canDecrement()"
+        [disabled]="!store.canDecrement()"
         (click)="store.downCount()"
         class="btn btn-primary"
       >
@@ -31,8 +31,4 @@ import { CounterStore } from '../stores/counter';
 })
 export class Ui {
   store = inject(CounterStore);
-
-  canDecrement = computed(
-    () => this.store.counter() - this.store.increment() >= 0,
-  );
 }

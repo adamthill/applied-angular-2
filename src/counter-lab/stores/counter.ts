@@ -7,6 +7,11 @@ import {
   withProps,
   withState,
 } from '@ngrx/signals';
+import {
+  withDevtools,
+  withLocalStorage,
+  withStorageSync,
+} from '@angular-architects/ngrx-toolkit';
 
 const IncrementValues = [1, 3, 5] as const;
 type Increment = (typeof IncrementValues)[number];
@@ -16,6 +21,7 @@ type CounterState = {
 };
 
 export const CounterStore = signalStore(
+  withDevtools('counter'),
   withState<CounterState>({
     increment: 1,
     counter: 6,
@@ -31,4 +37,5 @@ export const CounterStore = signalStore(
   withComputed((state) => ({
     canDecrement: computed(() => state.counter() - state.increment() >= 0),
   })),
+  withStorageSync('counter'),
 );

@@ -1,9 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  computed,
-  inject,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Fizzbuzz } from '../components/fizzbuzz';
 import { CounterStore } from '../stores/counter';
 

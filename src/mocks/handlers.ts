@@ -1,4 +1,4 @@
+import { authHandler } from './auth-handler';
 import { articlesHandlers } from './links-handler';
-import { WELCOME_HANDLERS } from './welcome-handlers';
 
-export const handlers = [...WELCOME_HANDLERS, ...articlesHandlers];
+export const handlers = [...articlesHandlers, ...authHandler];
